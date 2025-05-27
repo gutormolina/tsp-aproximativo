@@ -1,13 +1,13 @@
 import argparse, time
-from tsp_solver import brute_force, nearest_neighbors
+from tsp_solver import brute_force, nearest_neighbors, cheapest_insertion
 from utils import extract_optimal_cost, read_matrix, print_results
 
 def main():
     parser = argparse.ArgumentParser(description='Resolvedor do Problema do Caixeiro Viajante')
 
     parser.add_argument('file', help='Arquivo contendo a matriz de adjacência')
-    parser.add_argument('algorithm', choices=['bf', 'nn'],
-                        help='Algoritmo a ser utilizado: bf (brute force) ou nn (nearest neighbors)')
+    parser.add_argument('algorithm', choices=['bf', 'nn', 'ci'],
+                        help='Algoritmo a ser utilizado: bf (brute force), nn (nearest neighbors) ou ci (cheapest insertion)')
     
     args = parser.parse_args()
 
@@ -20,12 +20,15 @@ def main():
         if args.algorithm == 'bf':
             print("Executando brute force...")
             tour, cost = brute_force(matrix)
-        else:
+        elif args.algorithm == 'nn':
             print("Executando nearest neighbors...")
             tour, cost = nearest_neighbors(matrix)
+        else:
+            print("Executando cheapest insertion...")
+            tour, cost = cheapest_insertion(matrix)
         end_time = time.perf_counter()
 
-        algorithm_name="Brute Force" if args.algorithm == 'bf' else "Nearest Neighbors"
+        algorithm_name = {'bf' : 'Brute Force', 'nn' : 'Nearest Neighbors', 'ci' : 'Cheapest Insertion'}[args.algorithm]
 
         print_results(
             tour = tour,
