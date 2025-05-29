@@ -1,4 +1,5 @@
 from itertools import permutations
+import math
 
 def brute_force(matrix):
     n = len(matrix)
@@ -30,6 +31,7 @@ def nearest_neighbors(matrix):
 
     tour.append(tour[0])
     cost = sum(matrix[tour[i]][tour[i+1]] for i in range(len(tour)-1))
+
     return tour, cost
 
 def cheapest_insertion(matrix):
@@ -62,3 +64,51 @@ def cheapest_insertion(matrix):
         
     cost = sum(matrix[subtour[i]][subtour[i+1]] for i in range(len(subtour)-1))
     return subtour, cost
+
+def mst_approximation(matrix):
+    n = len(matrix)
+    mst = _prim_mst(matrix)
+    tour = _preorder_dfs(mst)
+    cost = sum(matrix[tour[i]][tour[i+1]] for i in range(len(tour)-1))
+    
+    return tour, cost
+
+def _prim_mst(matrix):
+    n = len(matrix)
+    mst = [[] for _ in range(n)]
+    key = [math.inf] * n
+    parent = [-1] * n
+    in_mst = [False] * n
+    key[0] = 0
+
+    for _ in range(n):
+        u = min((v for v in range(n) if not in_mst[v]), key=lambda v: key[v])
+        in_mst[u] = True
+
+        if parent[u] != -1:
+            mst[u].append(parent[u])
+            mst[parent[u]].append(u)
+        
+        for v in range(n):
+            if matrix[u][v] > 0 and not in_mst[v] and matrix[u][v] < key[v]:
+                key[v] = matrix[u][v]
+                parent[v] = u
+    
+    return mst
+
+def _preorder_dfs(mst):
+    n = len(mst)
+    tour = []
+    visited = [False] * n
+    
+    def dfs(u):
+        visited[u] = True
+        tour.append(u)
+        for v in mst[u]:
+            if not visited[v]:
+                dfs(v)
+    
+    dfs(0)
+    tour.append(tour[0])
+
+    return tour

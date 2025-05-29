@@ -24,13 +24,7 @@ def print_results(tour, cost, optimal=None, exec_time=None, algorithm_name=""):
         percent = (diff / optimal) * 100
         print(f"\n🏆 Valor ótimo conhecido: {optimal}")
         print(f"📊 Diferença: {diff:+} ({percent:+.2f}%)", end=" ")
-        
-        if abs(percent) < 5:
-            print("| ✅ Próximo do ótimo")
-        elif percent < 0:
-            print("| ❗ MELHOR que o ótimo (verifique os dados)")
-        else:
-            print("| ⚠️ Pode ser melhorado")
+        print("\n")
     
     if exec_time is not None:
         if exec_time < 1:
